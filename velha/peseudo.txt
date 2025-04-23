@@ -1,0 +1,101 @@
+// Criar tabuleiro vazio com 9 posições
+tabuleiro ← lista com 9 espaços vazios
+
+FUNÇÃO exibir_tabuleiro()
+    imprimir linhas do tabuleiro no formato 3x3
+
+FUNÇÃO verificar_vencedor(tabuleiro, jogador)
+    combinacoes_vencedoras ← todas as linhas, colunas e diagonais possíveis
+    PARA cada combinacao EM combinacoes_vencedoras
+        SE todas as posições da combinação forem iguais ao jogador
+            RETORNE verdadeiro
+    RETORNE falso
+
+FUNÇÃO verificar_empate(tabuleiro)
+    RETORNE verdadeiro se não houver espaços vazios no tabuleiro
+
+FUNÇÃO minimax(tabuleiro, profundidade, maximizando)
+    SE verificar_vencedor(tabuleiro, "X")
+        RETORNE -10 + profundidade
+    SE verificar_vencedor(tabuleiro, "O")
+        RETORNE 10 - profundidade
+    SE verificar_empate(tabuleiro)
+        RETORNE 0
+
+    // Testa as jogadas 
+    SE maximizando == verdadeiro // Maximiza a jogada do computador
+        melhor_valor ← -infinito // Menor valor possível. Podemos utilizar o -float("inf")
+        PARA i de 0 até 8
+            SE tabuleiro[i] estiver vazio
+                tabuleiro[i] ← "O"
+                valor ← minimax(tabuleiro, profundidade + 1, falso)
+                tabuleiro[i] ← " "
+                melhor_valor ← máximo(melhor_valor, valor) // Função max() pode ser usada aqui
+        RETORNE melhor_valor
+    SENÃO (Testa a minimização da jogada do adversario)
+        melhor_valor ← +infinito // Maior valor possível. Podemos utilizar o float("inf")
+        PARA i de 0 até 8
+            SE tabuleiro[i] estiver vazio
+                tabuleiro[i] ← "X"
+                valor ← minimax(tabuleiro, profundidade + 1, verdadeiro)
+                tabuleiro[i] ← " "
+                melhor_valor ← mínimo(melhor_valor, valor) // Função min() pode ser usada aqui
+        RETORNE melhor_valor
+
+FUNÇÃO melhor_jogada(tabuleiro)
+    melhor_valor ← -infinito // menor valor possível
+    melhor_posicao ← -1
+
+    PARA i de 0 até 8
+        SE tabuleiro[i] estiver vazio
+            tabuleiro[i] ← "O"
+            valor ← minimax(tabuleiro, 0, falso)
+            tabuleiro[i] ← " "
+            SE valor > melhor_valor
+                melhor_valor ← valor
+                melhor_posicao ← i
+
+    RETORNE melhor_posicao
+
+FUNÇÃO jogar_jogo()
+    ENQUANTO VERDADEIRO
+        exibir_tabuleiro()
+
+        // Turno do jogador (X)
+        REPITA
+            solicitar entrada do jogador entre 0 e 8
+            SE posição for válida e estiver vazia
+                SAIR do loop
+            SENÃO
+                mostrar mensagem de erro
+        tabuleiro[jogada] ← "X"
+
+        SE verificar_vencedor(tabuleiro, "X")
+            exibir_tabuleiro()
+            imprimir "Você venceu!"
+            SAIR
+        SE verificar_empate(tabuleiro)
+            exibir_tabuleiro()
+            imprimir "Empate!"
+            SAIR
+
+        // Turno do computador (O)
+        imprimir "Computador está pensando..."
+        melhor_posicao ← melhor_jogada(tabuleiro)
+        tabuleiro[melhor_posicao] ← "O"
+
+        SE verificar_vencedor(tabuleiro, "O")
+            exibir_tabuleiro()
+            imprimir "O computador venceu!"
+            SAIR
+        SE verificar_empate(tabuleiro)
+            exibir_tabuleiro()
+            imprimir "Empate!"
+            SAIR
+
+// Execução inicial
+imprimir mensagens de boas-vindas
+mostrar posições do tabuleiro numeradas
+chamar jogar_jogo()
+
+FIM
